@@ -8,7 +8,7 @@ DetailPage.propTypes = {
 function DetailPage(props) {
     return (
         <div>
-            
+            ToDoDetailPag
         </div>
     );
 }

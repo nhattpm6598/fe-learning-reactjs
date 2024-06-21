@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import AlbumList from "./components/AlbumList";
+import queryString from "query-string";
+import {
+  useHistory,
+  useLocation,
+  useRouteMatch,
+} from "react-router-dom/cjs/react-router-dom";
+import TodoList from "../Todo/components/TodoList";
 
 AlbumFeature.propTypes = {};
 
@@ -29,7 +36,13 @@ function AlbumFeature(props) {
     },
   ]);
 
-  const [filteredStatus, setFilteredStatus] = useState("all");
+  const location = useLocation();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const [filteredStatus, setFilteredStatus] = useState(() => {
+    const params = queryString.parse(location.search);
+    return params.status || "all";
+  });
 
   const handleAlbumClick = (album, idx) => {
     //console.log(album, idx);
@@ -48,24 +61,48 @@ function AlbumFeature(props) {
   };
 
   const handleShowAllClick = () => {
-    setFilteredStatus("all");
+    //setFilteredStatus("all");
+    const queryParams = { status: "all" };
+    history.push({
+      pathname: match.path,
+      search: queryString.stringify(queryParams),
+    });
   };
   const handleShowCompleteClick = () => {
-    setFilteredStatus("completed");
+    //setFilteredStatus("completed");
+    const queryParams = { status: "completed" };
+    history.push({
+      pathname: match.path,
+      search: queryString.stringify(queryParams),
+    });
   };
   const handleShowNewClick = () => {
-    setFilteredStatus("new");
+    //setFilteredStatus("new");
+    const queryParams = { status: "new" };
+    history.push({
+      pathname: match.path,
+      search: queryString.stringify(queryParams),
+    });
   };
 
-  const renderedAlbumList = albumList.filter(
-    (album) => filteredStatus === "all" || filteredStatus === album.status
-  );
-  console.log(renderedAlbumList);
+  const renderedAlbumList = useMemo(() => {
+    return albumList.filter(
+      (album) => filteredStatus === "all" || filteredStatus === album.status
+    );
+  }, [albumList, filteredStatus]);
+
+  useEffect(() => {
+    const params = queryString.parse(location.search);
+    setFilteredStatus(params.status || "all");
+  }, [location.search]);
 
   return (
     <div>
       <h1> Album Yêu Thich</h1>
-      <AlbumList albumList={renderedAlbumList} onAlbumClick={handleAlbumClick} />
+      <AlbumList
+        albumList={renderedAlbumList}
+        onAlbumClick={handleAlbumClick}
+      />
 
       <div>
         <button onClick={handleShowAllClick}>show-all</button>
