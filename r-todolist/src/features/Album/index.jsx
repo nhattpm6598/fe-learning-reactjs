@@ -8,6 +8,7 @@ import {
   useRouteMatch,
 } from "react-router-dom/cjs/react-router-dom";
 import TodoList from "../Todo/components/TodoList";
+import AlbumForm from "./components/AlbumForm";
 
 AlbumFeature.propTypes = {};
 
@@ -96,8 +97,26 @@ function AlbumFeature(props) {
     setFilteredStatus(params.status || "all");
   }, [location.search]);
 
+  const handleAlbumFormSubmit = (values)=> {
+    const newAlbum = {
+      id : albumList.length + 1 ,
+      name: values.title,
+      status: 'new',
+      thumbnailUrl :''
+    };
+
+    const newAlbumList = [...albumList, newAlbum];
+
+
+    setAlbumList(newAlbumList);
+
+  }
+
   return (
     <div>
+      <h1> What is Form</h1>
+      {/**/}
+      <AlbumForm onSubmit={handleAlbumFormSubmit}></AlbumForm>
       <h1> Album Yêu Thich</h1>
       <AlbumList
         albumList={renderedAlbumList}
